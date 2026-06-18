@@ -86,6 +86,7 @@ export async function getConfig(throwError: boolean = false) {
 export async function setConfig(appConfig: AppConfig) {
   if (IS_DATABASE) {
     try {
+      await Service.syncTable();
       const res = await Service.upsertConfig({
         ...appConfig,
         version: "latest",
