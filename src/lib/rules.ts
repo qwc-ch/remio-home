@@ -600,9 +600,12 @@ const musicRules: RuleItem[] = [
     controlKey: "checkbox",
     field: "$boolean",
     isRequired: false,
-    label: "启用效果",
-    items: [{ label: "启用音乐播放器", value: "enable" }],
-    default: ["enable"],
+    label: "效果开关",
+    items: [
+      { label: "启用音乐播放器", value: "enable" },
+      { label: "显示歌词", value: "showLyrics" },
+    ],
+    default: ["enable", "showLyrics"],
   },
   {
     controlKey: "select",
@@ -639,14 +642,6 @@ const musicRules: RuleItem[] = [
       { label: "随机播放", value: "random" },
     ],
     default: "list",
-  },
-  {
-    controlKey: "checkbox",
-    field: "$boolean",
-    isRequired: false,
-    label: "显示功能",
-    items: [{ label: "显示歌词", value: "showLyrics" }],
-    default: ["showLyrics"],
   },
   {
     field: "metingApi",
