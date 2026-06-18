@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { variants, showMotion } from "@/lib/motion";
 import { Controller } from "../controller/Controller";
+import { MusicToggle, Player } from "../player/Player";
 
 export function MainEffect({
   bgArr,
@@ -26,11 +27,15 @@ export function MainEffect({
   autoAnimate,
   theme,
   motions = {},
+  musicConfig,
+  primaryColor,
 }: BgConfig & {
   bgArr: string[];
   mbgArr: string[];
   theme?: string;
   motions?: object;
+  musicConfig?: Record<string, any>;
+  primaryColor?: string;
 }) {
   const videoExtensions = [
     ".mp4",
@@ -43,18 +48,13 @@ export function MainEffect({
   ];
 
   const [index, setIndex] = useState<number>(0);
-
   const [mindex, setMindex] = useState<number>(0);
-
   const [variant, setVariant] = useState<Object>({});
-
   const videoRef = useRef<HTMLVideoElement>(null);
-
   const audioRef = useRef<HTMLAudioElement | null>(null);
-
   const [aPlaying, setAPlaying] = useState(false);
-
   const [hasMedia, setHasMedia] = useState(false);
+  const [musicOpen, setMusicOpen] = useState(false);
 
   const [vPlaying, setVPlaying] = useState(false);
 
@@ -268,6 +268,19 @@ export function MainEffect({
         hasMedia={hasMedia}
         motions={motions}
         handleMuteUnmute={audio ? togglePlayPause : handleMuteUnmute}
+        extraButtons={
+          musicConfig?.enable ? (
+            <MusicToggle
+              isOpen={musicOpen}
+              onToggle={() => setMusicOpen((v) => !v)}
+            />
+          ) : undefined
+        }
+      />
+      <Player
+        open={musicOpen}
+        musicConfig={musicConfig as any}
+        primaryColor={primaryColor}
       />
     </section>
   );

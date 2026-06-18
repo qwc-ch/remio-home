@@ -5,7 +5,7 @@
  * @LastEditTime: 2024-10-21 21:11:18
  * @Description:
  */
-import { onAmap, onOio } from "@/lib/api";
+import { onAmap } from "@/lib/api";
 import { NextRequest, NextResponse } from "next/server";
 
 export const revalidate = 0;
@@ -15,38 +15,37 @@ const AMAP_KEY = process.env.AMAP_KEY;
 export const GET = async (req: NextRequest) => {
   const ip = req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for");
   const clientIp = ip != "::1" && ip != null ? ip : undefined;
+
   if (!AMAP_KEY) {
-    const res: any = await onOio("weather", {}, req.headers);
-    if (res?.code == 200 && res?.result) {
-      const {
-        result: { city, condition },
-      } = res;
-      return NextResponse.json({
-        data: {
-          apiKey: "oio",
-          province: city?.Province,
-          city: city?.City,
-          carrier: city?.Carrier,
-          adcode: null,
-          weather: condition?.day_weather,
-          temperature: condition?.max_degree,
-          winddirection: condition?.day_wind_direction,
-          windpower: condition?.day_wind_power,
-          humidity: condition?.aqi?.aqi,
-          reporttime: condition?.aqi?.update_time,
-          temperature_float: null,
-          humidity_float: null,
-        },
-        success: true,
-        message: "success",
+    try {
+      const res = await fetch("https://uapis.cn/api/v1/misc/weather", {
+        headers: { "User-Agent": "curl/7.88" },
       });
-    } else {
-      return NextResponse.json({
-        data: "error: oio",
-        success: false,
-        message: "fail",
-      });
+      const data = await res.json();
+      if (data?.city) {
+        return NextResponse.json({
+          data: {
+            apiKey: "uapis",
+            city: data.city,
+            weather: data.weather,
+            temperature: data.temperature,
+            humidity: data.humidity,
+            winddirection: data.wind_direction,
+            windpower: data.wind_power,
+            reporttime: data.report_time,
+          },
+          success: true,
+          message: "success",
+        });
+      }
+    } catch (e) {
+      console.log("uapis error:", e);
     }
+    return NextResponse.json({
+      data: "error: weather",
+      success: false,
+      message: "fail",
+    });
   }
 
   const resIp: any =

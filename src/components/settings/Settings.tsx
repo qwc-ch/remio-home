@@ -33,10 +33,26 @@ export const Settings = ({
   const router = useRouter();
 
   const onMerge = (data: FormObj, field?: string) => {
-    setResult({
-      ...result,
-      ...(field ? { [field]: data } : data),
-    });
+    if (field === "music") {
+      // Convert flat meting fields back to nested meting object
+      const meting: any = {};
+      if (data.metingApi) meting.api = data.metingApi;
+      if (data.metingServer) meting.server = data.metingServer;
+      if (data.metingType) meting.type = data.metingType;
+      if (data.metingId) meting.id = data.metingId;
+      if (data.metingAuth) meting.auth = data.metingAuth;
+      if (data.metingFallbackApis) meting.fallbackApis = data.metingFallbackApis;
+      const { metingApi, metingServer, metingType, metingId, metingAuth, metingFallbackApis, ...rest } = data;
+      setResult({
+        ...result,
+        music: { ...rest, meting },
+      });
+    } else {
+      setResult({
+        ...result,
+        ...(field ? { [field]: data } : data),
+      });
+    }
   };
 
   const handleFileChange = (event: any) => {

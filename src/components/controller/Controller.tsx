@@ -23,11 +23,13 @@ export function Controller({
   theme,
   hasMedia,
   handleMuteUnmute,
+  extraButtons,
 }: {
   motions?: object;
   theme?: string;
   hasMedia?: boolean;
   handleMuteUnmute?: Function;
+  extraButtons?: React.ReactNode;
 }) {
   const hidden = !hasMedia && theme != "switcher";
 
@@ -44,6 +46,7 @@ export function Controller({
       <div className="hidden h-0 flex-col gap-2 duration-300 group-hover:flex group-hover:h-auto">
         <ThemeSwitcher theme={theme} />
         {hasMedia && <MuteSwitcher onSwitch={handleMuteUnmute} />}
+        {extraButtons}
       </div>
       <div className="px-2">
         <Setting size={22} />

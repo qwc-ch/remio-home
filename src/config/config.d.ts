@@ -143,6 +143,31 @@ interface GlobalStyle {
   weather?: boolean;
 }
 
+interface MusicConfig {
+  enable?: boolean;
+  mode?: "meting" | "local";
+  volume?: number;
+  playMode?: "list" | "one" | "random";
+  showLyrics?: boolean;
+  meting?: {
+    api?: string;
+    server?: "netease" | "tencent" | "kugou" | "xiami" | "baidu";
+    type?: "song" | "playlist" | "album" | "search" | "artist";
+    id?: string;
+    auth?: string;
+    fallbackApis?: string[];
+  };
+  local?: {
+    playlist?: Array<{
+      name: string;
+      artist: string;
+      url: string;
+      cover?: string;
+      lrc?: string;
+    }>;
+  };
+}
+
 interface Resources {
   js?: string[];
   css?: string[];
@@ -168,4 +193,5 @@ export interface AppConfig {
   sitesConfig?: SitesConfig; // sites 渲染组件配置项
   sliders?: SlidersConfig;
   resources?: Resources;
+  music?: MusicConfig;
 }

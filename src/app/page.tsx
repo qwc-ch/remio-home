@@ -12,7 +12,6 @@ import { MainEffect } from "@/components/effect/MainEffect";
 import { getMotion } from "@/lib/motion";
 import { Footer } from "@/components/layout/Footer";
 import dynamic from "next/dynamic";
-import { Controller } from "@/components/controller/Controller";
 import { Weather } from "@/components/weather/Weather";
 import { pg } from "@/lib/db";
 
@@ -78,6 +77,8 @@ export default async function Home() {
         audio={bgConfig?.audio}
         theme={globalStyle?.theme}
         motions={getMotion(0.1, 4, 0.2, istTransition)}
+        musicConfig={others?.music}
+        primaryColor={varStyle?.["--primary-color"]}
       />
       {footer ? (
         <Footer

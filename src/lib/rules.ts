@@ -595,6 +595,103 @@ const slidersRules: RuleItem[] = [
   },
 ];
 
+const musicRules: RuleItem[] = [
+  {
+    controlKey: "checkbox",
+    field: "$boolean",
+    isRequired: false,
+    label: "启用效果",
+    items: [{ label: "启用音乐播放器", value: "enable" }],
+    default: ["enable"],
+  },
+  {
+    controlKey: "select",
+    field: "mode",
+    isRequired: false,
+    label: "数据源模式",
+    items: [
+      { label: "Meting API", value: "meting" },
+      { label: "本地播放列表", value: "local" },
+    ],
+    default: "meting",
+  },
+  {
+    field: "volume",
+    isRequired: false,
+    label: "默认音量",
+    desc: "0-1之间，默认0.8",
+    controlProps: {
+      type: "number",
+      min: 0,
+      max: 1,
+      step: "0.1",
+    },
+    default: 0.8,
+  },
+  {
+    controlKey: "select",
+    field: "playMode",
+    isRequired: false,
+    label: "播放模式",
+    items: [
+      { label: "列表循环", value: "list" },
+      { label: "单曲循环", value: "one" },
+      { label: "随机播放", value: "random" },
+    ],
+    default: "list",
+  },
+  {
+    controlKey: "checkbox",
+    field: "$boolean",
+    isRequired: false,
+    label: "显示功能",
+    items: [{ label: "显示歌词", value: "showLyrics" }],
+    default: ["showLyrics"],
+  },
+  {
+    field: "metingApi",
+    isRequired: false,
+    label: "Meting API 地址",
+    desc: "支持 :server :type :id :r 占位符",
+  },
+  {
+    field: "metingServer",
+    isRequired: false,
+    label: "音乐服务",
+    desc: "netease / tencent / kugou / baidu",
+  },
+  {
+    field: "metingType",
+    isRequired: false,
+    label: "资源类型",
+    desc: "song / playlist / album / artist",
+  },
+  {
+    field: "metingId",
+    isRequired: false,
+    label: "资源 ID",
+  },
+  {
+    field: "metingAuth",
+    isRequired: false,
+    label: "授权密钥",
+  },
+  {
+    field: "metingFallbackApis",
+    isRequired: false,
+    label: "备用 API",
+    desc: "多个备用API请以英文分号';'分隔",
+    transform: (val: any, input?: boolean) => {
+      if (!val) return val;
+      if (input) {
+        return Array.isArray(val) ? val.join(";") : val;
+      } else {
+        return typeof val === "string" ? val.split(";") : val;
+      }
+    },
+  },
+];
+
 const resourcesRules: RuleItem[] = [
   {
     field: "css",
@@ -650,6 +747,7 @@ export const AppRules = [
   { title: "社媒设置", rules: socialRules, field: "socialConfig" },
   { title: "技能设置", rules: slidersRules, field: "sliders" },
   { title: "资源设置", rules: resourcesRules, field: "resources" },
+  { title: "音乐设置", rules: musicRules, field: "music" },
 ];
 
 export const defaultAppConfig: AppConfig = {
