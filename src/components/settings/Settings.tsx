@@ -120,7 +120,20 @@ export const Settings = ({
         selectionMode="multiple"
       >
         {AppRules?.map(({ title, rules, field }) => {
-          const form = field ? (config as any)[field as any] : config;
+          let form = field ? (config as any)[field as any] : config;
+          // Flatten nested meting object for the music form
+          if (field === "music" && form?.meting) {
+            const { meting, ...rest } = form;
+            form = {
+              ...rest,
+              metingApi: meting.api || "",
+              metingServer: meting.server || "",
+              metingType: meting.type || "",
+              metingId: meting.id || "",
+              metingAuth: meting.auth || "",
+              metingFallbackApis: meting.fallbackApis || [],
+            };
+          }
           return (
             <AccordionItem
               key={title}

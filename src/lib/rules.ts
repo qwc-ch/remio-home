@@ -912,4 +912,19 @@ export const defaultAppConfig: AppConfig = {
     js: [],
     bodyHtml: "",
   },
+  music: {
+    enable: false,
+    mode: "meting",
+    volume: 0.8,
+    playMode: "list",
+    showLyrics: true,
+    meting: {
+      api: "",
+      server: "netease",
+      type: "playlist",
+      id: "",
+      auth: "",
+      fallbackApis: [],
+    },
+  },
 };
