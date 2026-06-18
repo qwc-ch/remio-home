@@ -424,19 +424,20 @@ export const Player = ({
       audioRef.current = audio;
 
       // Register audio events ONCE — never tear down
-      audio.addEventListener("timeupdate", () => {
-        setCurrentTime(audio.currentTime);
-        setDuration(audio.duration || 0);
+      const a = audio;
+      a.addEventListener("timeupdate", () => {
+        setCurrentTime(a.currentTime);
+        setDuration(a.duration || 0);
       });
-      audio.addEventListener("ended", () => {
+      a.addEventListener("ended", () => {
         playNextRef.current(true);
       });
-      audio.addEventListener("error", () => {
-        console.warn("[Player] audio error:", audio?.error);
+      a.addEventListener("error", () => {
+        console.warn("[Player] audio error:", a?.error);
         setError("音频播放错误");
       });
-      audio.addEventListener("loadedmetadata", () => {
-        setDuration(audio.duration || 0);
+      a.addEventListener("loadedmetadata", () => {
+        setDuration(a.duration || 0);
       });
     }
 
