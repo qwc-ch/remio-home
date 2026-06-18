@@ -699,7 +699,7 @@ export const Player = ({
           </button>
 
           <button
-            onClick={playNext}
+            onClick={() => playNext()}
             className="p-2 text-neutral-600 transition-colors hover:text-[var(--primary-color)] active:scale-95 dark:text-neutral-300"
             title="下一首"
           >
