@@ -1,10 +1,3 @@
-/*
- * @Author: kasuie
- * @Date: 2024-08-18 11:34:25
- * @LastEditors: kasuie
- * @LastEditTime: 2025-06-18 16:00:00
- * @Description: Music Player adapted from Firefly design
- */
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -56,9 +49,7 @@ interface MusicConfig {
   playMode?: "list" | "one" | "random";
   showLyrics?: boolean;
   meting?: MetingConfig;
-  local?: {
-    playlist?: LocalSong[];
-  };
+  local?: { playlist?: LocalSong[] };
 }
 
 type PlayMode = 0 | 1 | 2;
@@ -99,68 +90,40 @@ function parseLRC(lrc: string): LyricsLine[] {
 }
 
 const MusicNoteIcon = () => (
-  <svg className="text-2xl opacity-40" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-  </svg>
-);
-
-const SubtitlesIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6v-2zm0 4h8v2H6v-2zm10 0h2v2h-2v-2zm-6-4h8v2h-8v-2z"/>
-  </svg>
-);
-
-const SubtitlesOffIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6.83 10.83L8 12l-1.17 1.17L5.66 12l1.17-1.17zM10 14h2v2h-2v-2zm6-4h-2V8h2v2zm-2 2h2v2h-2v-2zm-2-2h2v2h-2v-2zm-2 2h2v2h-2v-2z"/>
-  </svg>
-);
-
-const PlaylistIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-  </svg>
-);
-
-const RepeatOneIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z"/>
+  <svg className="text-2xl opacity-40" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
   </svg>
 );
 
 const SyncIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="text-3xl" aria-hidden="true">
-    <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+  <svg viewBox="0 0 24 24" fill="currentColor" className="text-3xl">
+    <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z" />
   </svg>
 );
 
-/* ───────── Music Toggle Button (goes inside Controller's settings menu) ───────── */
+const RepeatOneIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+    <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z" />
+  </svg>
+);
 
-export const MusicToggle = ({
-  isOpen,
-  onToggle,
-}: {
-  isOpen: boolean;
-  onToggle: () => void;
-}) => (
+const PlaylistIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor">
+    <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
+  </svg>
+);
+
+export const MusicToggle = ({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) => (
   <div
     onClick={onToggle}
     className="relative z-10 flex h-8 w-8 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-white/15 opacity-75 shadow-[2px_2px_10px_rgba(0,0,0,0.13)] transition duration-300 hover:opacity-100"
     title={isOpen ? "关闭音乐播放器" : "打开音乐播放器"}
   >
-    <svg
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      width="16"
-      height="16"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
       <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
     </svg>
   </div>
 );
-
-/* ───────── Player Panel ───────── */
 
 export const Player = ({
   open,
@@ -174,13 +137,13 @@ export const Player = ({
   const [playlist, setPlaylist] = useState<Track[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  
+  // 时间与进度状态
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolumeState] = useState(() => {
-    if (typeof window === "undefined") return musicConfig?.volume ?? 0.7;
-    const saved = localStorage.getItem("music-player-volume");
-    return saved ? parseFloat(saved) : (musicConfig?.volume ?? 0.7);
-  });
+  const [dragProgress, setDragProgress] = useState<number | null>(null); // 新增拖拽状态隔离
+  
+  const [volume, setVolumeState] = useState(musicConfig?.volume ?? 0.7);
   const [isMuted, setIsMuted] = useState(false);
   const [playMode, setPlayMode] = useState<PlayMode>(() => {
     const pm = musicConfig?.playMode ?? "list";
@@ -192,22 +155,36 @@ export const Player = ({
   const [currentLrcIndex, setCurrentLrcIndex] = useState(-1);
   const [loading, setLoading] = useState(true);
   const [lyricsOpen, setLyricsOpen] = useState(false);
-  const [isUserScrolling, setIsUserScrolling] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [playlistFullOpen, setPlaylistFullOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isUserScrolling, setIsUserScrolling] = useState(false);
+  const [coverLoaded, setCoverLoaded] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const lrcContainerRef = useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const loadVersionRef = useRef(0);
-  const initializedRef = useRef(false);
   const lastFetchRef = useRef(0);
 
   const currentTrack = playlist[currentIndex] || null;
-
   const primaryStyle = primaryColor ? { color: primaryColor } : undefined;
   const primaryBg = primaryColor ? { backgroundColor: primaryColor } : undefined;
+
+  const filteredPlaylist = playlist.filter(
+    (t) =>
+      !searchQuery ||
+      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.artist.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  useEffect(() => {
+    const saved = localStorage.getItem("music-player-volume");
+    if (saved) {
+      const parsed = parseFloat(saved);
+      setVolumeState(parsed);
+      if (audioRef.current) audioRef.current.volume = parsed;
+    }
+  }, []);
 
   const loadLyrics = useCallback(async (track: Track) => {
     if (!track.lrc) {
@@ -233,13 +210,59 @@ export const Player = ({
     setCurrentLrcIndex(-1);
   }, []);
 
+  const fetchPlaylist = useCallback(async () => {
+    let tracks: Track[] = [];
+    try {
+      if (musicConfig?.mode === "meting" && musicConfig.meting) {
+        const m = musicConfig.meting;
+        const apis = [m.api].concat(m.fallbackApis || []);
+        for (const baseApi of apis) {
+          if (!baseApi) continue;
+          try {
+            const fetchUrl = baseApi
+              .replace(":server", m.server || "netease")
+              .replace(":type", m.type || "playlist")
+              .replace(":id", m.id || "")
+              .replace(":r", Math.random().toString());
+            const url = m.auth ? fetchUrl + "&auth=" + m.auth : fetchUrl;
+            const res = await fetch(`/api/music?url=${encodeURIComponent(url)}`);
+            const json = await res.json();
+            if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+              tracks = json.data.map((item: any) => ({
+                name: item.title || item.name || "Unknown",
+                artist: item.author || item.artist || "Unknown",
+                url: item.url,
+                pic: item.pic || item.cover || "",
+                lrc: item.lrc,
+              }));
+              break;
+            }
+          } catch {
+            continue;
+          }
+        }
+      } else if (musicConfig?.mode === "local" && musicConfig.local?.playlist) {
+        tracks = musicConfig.local.playlist.map((song: LocalSong) => ({
+          name: song.name,
+          artist: song.artist,
+          url: song.url,
+          pic: song.cover,
+          lrc: song.lrc,
+        }));
+      }
+    } catch {
+      // fallthrough
+    }
+    lastFetchRef.current = Date.now();
+    return tracks;
+  }, [musicConfig]);
+
   const loadTrack = useCallback(
     (index: number, autoPlay: boolean) => {
-      if (index < 0 || index >= playlist.length) return false;
+      if (index < 0 || index >= playlist.length) return;
       const ver = ++loadVersionRef.current;
       const track = playlist[index];
       setCurrentIndex(index);
-      setError(null);
       if (audioRef.current) {
         audioRef.current.src = proxyAudioUrl(track.url);
         audioRef.current.load();
@@ -257,7 +280,6 @@ export const Player = ({
           setIsPlaying(false);
         }
       }
-      return true;
     },
     [playlist, loadLyrics]
   );
@@ -281,7 +303,9 @@ export const Player = ({
   );
 
   const playNextRef = useRef(playNext);
-  playNextRef.current = playNext;
+  useEffect(() => {
+    playNextRef.current = playNext;
+  }, [playNext]);
 
   const playPrev = useCallback(() => {
     let prevIndex: number;
@@ -297,14 +321,7 @@ export const Player = ({
     const audio = audioRef.current;
     if (!audio) return;
     if (audio.paused) {
-      audio.play()
-        .then(() => {
-          setIsPlaying(true);
-        })
-        .catch((e) => {
-          console.warn("[Player] audio.play() failed:", e);
-          setIsPlaying(false);
-        });
+      audio.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
     } else {
       audio.pause();
       setIsPlaying(false);
@@ -357,182 +374,85 @@ export const Player = ({
     [currentIndex, togglePlay, loadTrack]
   );
 
-  const toggleLyrics = useCallback(() => {
-    setLyricsOpen((prev) => !prev);
-  }, []);
-
-  const fetchPlaylist = useCallback(async () => {
-    let tracks: Track[] = [];
-    try {
-      if (musicConfig?.mode === "meting" && musicConfig.meting) {
-        const m = musicConfig.meting;
-        const apis = [m.api].concat(m.fallbackApis || []);
-        for (const baseApi of apis) {
-          if (!baseApi) continue;
-          try {
-            const fetchUrl = baseApi
-              .replace(":server", m.server || "netease")
-              .replace(":type", m.type || "playlist")
-              .replace(":id", m.id || "")
-              .replace(":r", Math.random().toString());
-            const url = m.auth ? fetchUrl + "&auth=" + m.auth : fetchUrl;
-            const res = await fetch(`/api/music?url=${encodeURIComponent(url)}`);
-            const json = await res.json();
-            if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-              tracks = json.data.map((item: any) => ({
-                name: item.title || item.name || "Unknown",
-                artist: item.author || item.artist || "Unknown",
-                url: item.url,
-                pic: item.pic || item.cover || "",
-                lrc: item.lrc,
-              }));
-              break;
-            }
-          } catch {
-            continue;
-          }
-        }
-      } else if (musicConfig?.mode === "local" && musicConfig.local?.playlist) {
-        tracks = musicConfig.local.playlist.map((song: LocalSong) => ({
-          name: song.name,
-          artist: song.artist,
-          url: song.url,
-          pic: song.cover,
-          lrc: song.lrc,
-        }));
-      }
-    } catch {
-      // fallthrough
-    }
-    lastFetchRef.current = Date.now();
-    return tracks;
-  }, [musicConfig]);
-
   const refreshPlaylist = useCallback(async () => {
     setLoading(true);
     const tracks = await fetchPlaylist();
-    if (tracks.length > 0) {
-      setPlaylist(tracks);
-    }
+    if (tracks.length > 0) setPlaylist(tracks);
     setLoading(false);
   }, [fetchPlaylist]);
 
-  const togglePlaylist = useCallback(() => {
-    setPlaylistFullOpen((prev) => !prev);
-    if (lyricsOpen) setLyricsOpen(false);
-  }, [lyricsOpen]);
-
-  const handleProgressClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      seek(Math.min(Math.max(x / rect.width, 0), 1));
-    },
-    [seek]
-  );
-
-  const handleVolumeClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      const rect = e.currentTarget.getBoundingClientRect();
-      setVolume(Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)));
-    },
-    [setVolume]
-  );
-
-  const handleLrcScroll = useCallback(() => {
-    setIsUserScrolling(true);
-    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-    scrollTimeoutRef.current = setTimeout(() => {
-      setIsUserScrolling(false);
-      const idx = currentLrcIndex;
-      if (idx >= 0 && lrcContainerRef.current) {
-        const line = lrcContainerRef.current.querySelector(
-          `.lrc-line[data-index="${idx}"]`
-        ) as HTMLElement | null;
-        if (line) {
-          const ch = lrcContainerRef.current.clientHeight;
-          const target = line.offsetTop - ch / 2 + line.offsetHeight / 2;
-          lrcContainerRef.current.scrollTo({ top: target, behavior: "auto" });
-        }
-      }
-    }, 3000);
-  }, [currentLrcIndex]);
-
-  // Init
+  // Audio 初始化与生命周期
   useEffect(() => {
-    if (initializedRef.current) return;
-    initializedRef.current = true;
+    if (!musicConfig?.enable) return;
 
-    // Firefly pattern: singleton audio, never removed from DOM
     let audio = audioRef.current;
     if (!audio) {
-      const existing = document.querySelector('audio[data-player]');
-      if (existing instanceof HTMLAudioElement) {
-        audio = existing;
-      } else {
-        audio = new Audio();
-        audio.crossOrigin = "anonymous";
-        audio.style.display = "none";
-        audio.setAttribute("data-player", "");
-        document.body.appendChild(audio);
-      }
+      audio = new Audio();
+      audio.crossOrigin = "anonymous";
+      audio.style.display = "none";
+      document.body.appendChild(audio);
       audioRef.current = audio;
 
-      const a = audio;
-      a.addEventListener("timeupdate", () => {
-        setCurrentTime(a.currentTime);
-        setDuration(a.duration || 0);
+      audio.addEventListener("timeupdate", () => {
+        setCurrentTime(audio!.currentTime);
+        setDuration(audio!.duration || 0);
       });
-      a.addEventListener("ended", () => {
-        playNextRef.current(true);
+      audio.addEventListener("ended", () => playNextRef.current(true));
+      audio.addEventListener("loadedmetadata", () => setDuration(audio!.duration || 0));
+      audio.addEventListener("error", () => {
+        console.warn("[Player] audio error, skipping...");
+        setIsPlaying(false);
+        setTimeout(() => playNextRef.current(true), 2000); 
       });
-      a.addEventListener("error", () => {
-        console.warn("[Player] audio error:", a?.error);
-        setError("音频播放错误");
-      });
-      a.addEventListener("loadedmetadata", () => {
-        setDuration(a.duration || 0);
-      });
+
+      const savedVolume = localStorage.getItem("music-player-volume");
+      if (savedVolume) audio.volume = parseFloat(savedVolume);
     }
 
-    const init = async () => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.remove();
+        audioRef.current = null;
+      }
+    };
+  }, [musicConfig?.enable]);
+
+  // 深度监听配置更新，外部加歌自动静默刷新
+  const configHash = JSON.stringify(musicConfig || {});
+  useEffect(() => {
+    if (!musicConfig?.enable) return;
+    let isMounted = true;
+
+    const updatePlaylistData = async () => {
       setLoading(true);
       const tracks = await fetchPlaylist();
+      if (!isMounted) return;
+
       if (tracks.length > 0) {
-        audio.volume = volume;
-        setPlaylist(tracks);
-        const startIndex = playMode === 2
-          ? Math.floor(Math.random() * tracks.length)
-          : 0;
-        setCurrentIndex(startIndex);
-        const track = tracks[startIndex];
-        const src = proxyAudioUrl(track.url);
-        audio.src = src;
-        audio.load();
-        loadLyrics(track);
+        setPlaylist((prev) => {
+          if (JSON.stringify(prev) === JSON.stringify(tracks)) return prev;
+          return tracks;
+        });
       }
       setLoading(false);
     };
 
-    init();
+    updatePlaylistData();
+    return () => { isMounted = false; };
+  }, [configHash, fetchPlaylist, musicConfig?.enable]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Periodic playlist refresh (every 30 min)
   useEffect(() => {
-    if (!musicConfig?.enable) return;
-    const interval = setInterval(async () => {
-      if (Date.now() - lastFetchRef.current < 30 * 60 * 1000) return;
-      const tracks = await fetchPlaylist();
-      if (tracks.length > 0) {
-        setPlaylist(tracks);
-      }
-    }, 5 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [musicConfig?.enable, fetchPlaylist]);
+    if (playlist.length > 0 && audioRef.current && !audioRef.current.src) {
+      const startIndex = playMode === 2 ? Math.floor(Math.random() * playlist.length) : 0;
+      setCurrentIndex(startIndex);
+      const track = playlist[startIndex];
+      audioRef.current.src = proxyAudioUrl(track.url);
+      audioRef.current.load();
+      loadLyrics(track);
+    }
+  }, [playlist, playMode, loadLyrics]);
 
-  // Lyrics sync
   useEffect(() => {
     if (lyrics.length === 0) {
       setCurrentLrcIndex(-1);
@@ -543,10 +463,9 @@ export const Player = ({
       if (currentTime >= lyrics[i].time) idx = i;
       else break;
     }
-    if (idx !== currentLrcIndex) setCurrentLrcIndex(idx);
-  }, [currentTime, lyrics, currentLrcIndex]);
+    setCurrentLrcIndex((prev) => (prev !== idx ? idx : prev));
+  }, [currentTime, lyrics]);
 
-  // Auto-scroll lyrics
   useEffect(() => {
     if (currentLrcIndex >= 0 && !isUserScrolling && lrcContainerRef.current) {
       const line = lrcContainerRef.current.querySelector(
@@ -562,17 +481,76 @@ export const Player = ({
     }
   }, [currentLrcIndex, isUserScrolling]);
 
-  const [coverLoaded, setCoverLoaded] = useState(false);
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const handleLrcScroll = useCallback(() => {
+    setIsUserScrolling(true);
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = setTimeout(() => setIsUserScrolling(false), 3000);
+  }, []);
 
-  const filteredPlaylist = playlist.filter(
-    (t) =>
-      !searchQuery ||
-      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.artist.toLowerCase().includes(searchQuery.toLowerCase())
+  // 【核心修复】分离拖拽状态与真实播放进度
+  const handleProgressPointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      const container = e.currentTarget;
+      const rect = container.getBoundingClientRect();
+      container.setPointerCapture(e.pointerId);
+
+      const getVal = (clientX: number) => Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      
+      // 首次按下时更新假进度
+      const initialVal = getVal(e.clientX);
+      setDragProgress(initialVal); 
+
+      const onPointerMove = (moveEv: PointerEvent) => {
+        setDragProgress(getVal(moveEv.clientX));
+      };
+
+      const onPointerUp = (upEv: PointerEvent) => {
+        const finalVal = getVal(upEv.clientX);
+        seek(finalVal); // 松开手时才去真正拨动音乐
+        setDragProgress(null); // 恢复真实进度接管
+        container.releasePointerCapture(upEv.pointerId);
+        container.removeEventListener("pointermove", onPointerMove);
+        container.removeEventListener("pointerup", onPointerUp);
+      };
+
+      container.addEventListener("pointermove", onPointerMove);
+      container.addEventListener("pointerup", onPointerUp);
+    },
+    [seek]
   );
 
-  if (!musicConfig?.enable || !open || playlist.length === 0) return null;
+  const handleVolumePointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      const container = e.currentTarget;
+      const rect = container.getBoundingClientRect();
+      container.setPointerCapture(e.pointerId);
+
+      const update = (clientX: number) => {
+        const val = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        setVolume(val);
+      };
+      
+      update(e.clientX);
+
+      const onPointerMove = (moveEv: PointerEvent) => update(moveEv.clientX);
+      const onPointerUp = (upEv: PointerEvent) => {
+        update(upEv.clientX);
+        container.releasePointerCapture(upEv.pointerId);
+        container.removeEventListener("pointermove", onPointerMove);
+        container.removeEventListener("pointerup", onPointerUp);
+      };
+
+      container.addEventListener("pointermove", onPointerMove);
+      container.addEventListener("pointerup", onPointerUp);
+    },
+    [setVolume]
+  );
+
+  // 根据当前是否在拖动，决定 UI 显示的进度是 dragProgress 还是真实的 currentTime
+  const displayTime = dragProgress !== null ? dragProgress * duration : currentTime;
+  const progressPercent = duration > 0 ? (displayTime / duration) * 100 : 0;
+
+  if (!musicConfig?.enable || !open) return null;
 
   return (
     <div className="fixed bottom-20 right-6 z-20">
@@ -602,7 +580,7 @@ export const Player = ({
                   coverLoaded ? "opacity-100" : "opacity-0"
                 )}
                 style={{
-                  animation: `spin-slow 10s linear infinite`,
+                  animation: "spin-slow 10s linear infinite",
                   animationPlayState: isPlaying ? "running" : "paused",
                 }}
                 src={currentTrack?.pic || ""}
@@ -620,49 +598,39 @@ export const Player = ({
               </h3>
               {musicConfig.showLyrics && (
                 <button
-                  onClick={toggleLyrics}
+                  onClick={() => setLyricsOpen((p) => !p)}
                   className={clsx(
                     "shrink-0 p-0.5 pr-2 transition-all duration-300 active:scale-95",
                     lyricsOpen ? "text-[var(--primary-color)]" : "text-neutral-400 hover:text-[var(--primary-color)]"
                   )}
+                  style={lyricsOpen ? primaryStyle : undefined}
                   title="歌词"
                 >
-                  <span className="text-xl">
-                    {lyricsOpen ? <SubtitlesIcon /> : <SubtitlesOffIcon />}
-                  </span>
+                  <span className="text-xl">T</span>
                 </button>
               )}
             </div>
-            <div className="overflow-hidden">
-              <p className="truncate text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                {currentTrack?.artist || "暂无播放"}
-              </p>
-            </div>
+            <p className="truncate text-xs font-medium text-neutral-500 dark:text-neutral-400">
+              {currentTrack?.artist || "暂无播放"}
+            </p>
 
             <div className="flex h-5 items-center gap-3 text-neutral-400">
-              <div className="flex shrink-0 items-center gap-1 font-mono text-[10px]" aria-live="polite">
-                <span>{formatTime(currentTime)}</span>
+              <div className="flex shrink-0 items-center gap-1 font-mono text-[10px]">
+                {/* 这里的数字跟随拖拽实时变化 */}
+                <span>{formatTime(displayTime)}</span>
                 <span className="opacity-50">/</span>
                 <span>{formatTime(duration)}</span>
               </div>
-              <div className="ml-auto flex h-full items-center gap-1 bg-transparent">
-                <button
-                  onClick={toggleMute}
-                  className="flex items-center rounded-md p-0.5 transition-colors hover:text-[var(--primary-color)]"
-                  title="音量"
-                >
+              <div className="ml-auto flex h-full items-center gap-1">
+                <button onClick={toggleMute} className="flex items-center rounded-md p-0.5 transition-colors hover:text-[var(--primary-color)]" title="音量">
                   <span className="text-lg">
                     {isMuted || volume === 0 ? <VolumeXmark size={20} /> : <VolumeHigh size={20} />}
                   </span>
                 </button>
                 <div className="flex w-16 items-center">
                   <div
-                    onClick={handleVolumeClick}
-                    className="relative ml-1 h-1 w-16 cursor-pointer rounded-full bg-neutral-300/50 dark:bg-neutral-500/40"
-                    role="slider"
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-valuenow={Math.round(isMuted ? 0 : volume * 100)}
+                    onPointerDown={handleVolumePointerDown}
+                    className="relative ml-1 h-2 w-16 cursor-pointer touch-none rounded-full bg-neutral-300/50 dark:bg-neutral-500/40"
                   >
                     <div
                       className="absolute left-0 top-0 h-full rounded-full transition-all"
@@ -675,22 +643,19 @@ export const Player = ({
           </div>
         </div>
 
-        <div className="mb-2 px-1">
+        {/* 进度条：使用 progressPercent 进行渲染 */}
+        <div className="mb-2 px-1 py-1">
           <div
-            onClick={handleProgressClick}
+            onPointerDown={handleProgressPointerDown}
             className="group relative h-1 w-full cursor-pointer touch-none rounded-full bg-neutral-300/60 dark:bg-neutral-500/40"
-            role="slider"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.round(progress)}
           >
             <div
               className="absolute left-0 top-0 h-full rounded-full transition-[width] duration-100"
-              style={{ ...primaryBg, width: `${progress}%` }}
+              style={{ ...primaryBg, width: `${progressPercent}%` }}
             />
             <div
               className="absolute top-1/2 -ml-1.5 -mt-1.5 h-3 w-3 scale-0 rounded-full bg-[var(--primary-color)] shadow-sm ring-2 ring-white transition-transform duration-200 group-hover:scale-100 dark:ring-neutral-800"
-              style={{ left: `${progress}%` }}
+              style={{ left: `${progressPercent}%` }}
             />
           </div>
         </div>
@@ -710,15 +675,9 @@ export const Player = ({
               {playMode === 2 ? <Shuffle size={20} /> : playMode === 1 ? <RepeatOneIcon /> : <Loop size={20} />}
             </span>
           </button>
-
-          <button
-            onClick={playPrev}
-            className="p-2 text-neutral-600 transition-colors hover:text-[var(--primary-color)] active:scale-95 dark:text-neutral-300"
-            title="上一首"
-          >
+          <button onClick={playPrev} className="p-2 text-neutral-600 transition-colors hover:text-[var(--primary-color)] active:scale-95 dark:text-neutral-300" title="上一首">
             <span className="text-3xl"><TrackPrevious size={28} /></span>
           </button>
-
           <button
             onClick={togglePlay}
             className="flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300"
@@ -729,17 +688,11 @@ export const Player = ({
               {isPlaying ? <Pause size={28} /> : <Play size={28} />}
             </span>
           </button>
-
-          <button
-            onClick={() => playNext()}
-            className="p-2 text-neutral-600 transition-colors hover:text-[var(--primary-color)] active:scale-95 dark:text-neutral-300"
-            title="下一首"
-          >
+          <button onClick={() => playNext()} className="p-2 text-neutral-600 transition-colors hover:text-[var(--primary-color)] active:scale-95 dark:text-neutral-300" title="下一首">
             <span className="text-3xl"><TrackNext size={28} /></span>
           </button>
-
           <button
-            onClick={togglePlaylist}
+            onClick={() => setPlaylistFullOpen((p) => !p)}
             className={clsx(
               "p-2 transition-all duration-300 active:scale-95",
               playlistFullOpen ? "text-[var(--primary-color)]" : "text-neutral-400 hover:text-[var(--primary-color)]"
@@ -750,12 +703,8 @@ export const Player = ({
           </button>
         </div>
 
-        <div
-          className={clsx(
-            "grid transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
-            lyricsOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-          )}
-        >
+        {/* Lyrics Drawer */}
+        <div className={clsx("grid transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]", lyricsOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0")}>
           <div className="min-h-0 overflow-hidden">
             <div className="mx-1 mt-2 border-t border-neutral-100 pt-2 dark:border-white/5">
               <div
@@ -767,8 +716,6 @@ export const Player = ({
                   scrollTimeoutRef.current = setTimeout(() => setIsUserScrolling(false), 3000);
                 }}
                 className="custom-scrollbar relative flex h-48 flex-col items-center gap-2 overflow-y-auto p-4 py-24 text-center scroll-smooth"
-                role="listbox"
-                aria-label="歌词"
               >
                 {lyrics.length === 0 ? (
                   <div className="py-10 text-sm text-neutral-400">暂无歌词</div>
@@ -784,8 +731,6 @@ export const Player = ({
                           ? "text-base font-bold text-[var(--primary-color)]"
                           : "text-sm text-neutral-400 hover:text-[var(--primary-color)]"
                       )}
-                      role="option"
-                      aria-selected={i === currentLrcIndex}
                     >
                       {line.text}
                     </div>
@@ -796,7 +741,6 @@ export const Player = ({
           </div>
         </div>
 
-        {/* Global styles for animations and custom scrollbar */}
         <style>{`
           @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
           @keyframes eq-bounce { 0%, 100% { height: 4px; } 50% { height: 14px; } }
@@ -810,7 +754,6 @@ export const Player = ({
         `}</style>
       </div>
 
-      {/* Full-screen playlist overlay */}
       {playlistFullOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
@@ -820,26 +763,16 @@ export const Player = ({
             className="relative mx-4 flex max-h-[80vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-[#1e1e1e]"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
             <div className="flex items-center justify-between border-b border-neutral-100 px-5 py-4 dark:border-white/5">
               <div>
                 <h2 className="text-lg font-bold text-neutral-800 dark:text-neutral-100">播放列表</h2>
                 <p className="text-xs text-neutral-400">{playlist.length} 首歌曲</p>
               </div>
               <div className="flex items-center gap-2">
-                <button
-                  onClick={refreshPlaylist}
-                  className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-[var(--primary-color)] dark:hover:bg-white/10"
-                  title="刷新歌单"
-                >
-                  <span className={clsx("text-lg", loading && "animate-spin")}>
-                    <SyncIcon />
-                  </span>
+                <button onClick={refreshPlaylist} className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-[var(--primary-color)] dark:hover:bg-white/10" title="刷新歌单">
+                  <span className={clsx("text-lg", loading && "animate-spin")}><SyncIcon /></span>
                 </button>
-                <button
-                  onClick={() => setPlaylistFullOpen(false)}
-                  className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-white/10 dark:hover:text-neutral-200"
-                >
+                <button onClick={() => setPlaylistFullOpen(false)} className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-white/10 dark:hover:text-neutral-200">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
                   </svg>
@@ -847,7 +780,6 @@ export const Player = ({
               </div>
             </div>
 
-            {/* Search */}
             <div className="px-5 pt-3">
               <input
                 type="text"
@@ -858,7 +790,6 @@ export const Player = ({
               />
             </div>
 
-            {/* Song list */}
             <div className="custom-scrollbar flex-1 overflow-y-auto px-3 py-2">
               {filteredPlaylist.length === 0 ? (
                 <div className="py-10 text-center text-sm text-neutral-400">
@@ -877,9 +808,7 @@ export const Player = ({
                       }}
                       className={clsx(
                         "flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 transition-all group",
-                        isCurrent
-                          ? "bg-[var(--primary-color)]/10"
-                          : "hover:bg-neutral-100 dark:hover:bg-white/5"
+                        isCurrent ? "bg-[var(--primary-color)]/10" : "hover:bg-neutral-100 dark:hover:bg-white/5"
                       )}
                     >
                       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-neutral-200 dark:bg-neutral-700">
@@ -887,15 +816,10 @@ export const Player = ({
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img src={track.pic} className="h-full w-full object-cover" alt="" />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center">
-                            <MusicNoteIcon />
-                          </div>
+                          <div className="flex h-full w-full items-center justify-center"><MusicNoteIcon /></div>
                         )}
                         {isCurrent && (
-                          <div
-                            className="absolute inset-0 flex items-center justify-center"
-                            style={{ backgroundColor: `${primaryColor}55` }}
-                          >
+                          <div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: `${primaryColor}55` }}>
                             {isPlaying ? (
                               <div className="eq-bars flex h-3.5 items-end gap-[2px]">
                                 <span className="eq-bar w-[3px] rounded-sm bg-white" />
@@ -903,22 +827,13 @@ export const Player = ({
                                 <span className="eq-bar w-[3px] rounded-sm bg-white" />
                               </div>
                             ) : (
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                                <path d="M8 5v14l11-7z" />
-                              </svg>
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z" /></svg>
                             )}
                           </div>
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div
-                          className={clsx(
-                            "truncate text-sm font-medium transition-colors",
-                            isCurrent
-                              ? "text-[var(--primary-color)]"
-                              : "text-neutral-800 group-hover:text-[var(--primary-color)] dark:text-neutral-100"
-                          )}
-                        >
+                        <div className={clsx("truncate text-sm font-medium transition-colors", isCurrent ? "text-[var(--primary-color)]" : "text-neutral-800 group-hover:text-[var(--primary-color)] dark:text-neutral-100")}>
                           {track.name}
                         </div>
                         <div className="truncate text-xs text-neutral-400">{track.artist}</div>

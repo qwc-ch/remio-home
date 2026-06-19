@@ -17,28 +17,35 @@ export const GET = async (req: NextRequest) => {
   }
 
   try {
-    const res = await fetch(url, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        Referer: "https://music.163.com/",
-      },
-    });
+    const headers: Record<string, string> = {
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      Referer: "https://music.163.com/",
+    };
 
-    if (!res.ok) {
+    const range = req.headers.get("range");
+    if (range) {
+      headers["Range"] = range;
+    }
+
+    const res = await fetch(url, { headers });
+
+    if (!res.ok && res.status !== 206) {
       return NextResponse.json({ error: `HTTP ${res.status}` }, { status: res.status });
     }
 
     const contentType = res.headers.get("content-type") || "audio/mpeg";
     const contentLength = res.headers.get("content-length");
+    const contentRange = res.headers.get("content-range");
 
     return new NextResponse(res.body, {
-      status: 200,
+      status: res.status,
       headers: {
         "Content-Type": contentType,
         "Cache-Control": "no-cache",
         "Access-Control-Allow-Origin": "*",
         ...(contentLength ? { "Content-Length": contentLength } : {}),
+        ...(contentRange ? { "Content-Range": contentRange } : {}),
       },
     });
   } catch (e) {

@@ -174,7 +174,7 @@
     "playMode": "list",
     "showLyrics": true,
     "meting": {
-      "api": "https://api.i-meto.com/meting/api?server=:server&type=:type&id=:id&r=:r",
+      "api": "https://api.qijieya.cn/meting/?server=:server&type=:type&id=:id&auth=:auth&r=:r",
       "server": "netease",
       "type": "playlist",
       "id": "17426009449",
