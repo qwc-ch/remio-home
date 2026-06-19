@@ -120,7 +120,7 @@ export const Settings = ({
         selectionMode="multiple"
       >
         {AppRules?.map(({ title, rules, field }) => {
-          let form = field ? (config as any)[field as any] : config;
+          let form = field ? (result as any)[field as any] : result;
           // Flatten nested meting object for the music form
           if (field === "music" && form?.meting) {
             const { meting, ...rest } = form;
