@@ -18,7 +18,10 @@ export const GET = async (req: NextRequest) => {
 
   if (!AMAP_KEY) {
     try {
-      const res = await fetch("https://uapis.cn/api/v1/misc/weather", {
+      const url = clientIp
+        ? `https://uapis.cn/api/v1/misc/weather?ip=${clientIp}`
+        : "https://uapis.cn/api/v1/misc/weather";
+      const res = await fetch(url, {
         headers: { "User-Agent": "curl/7.88" },
       });
       const data = await res.json();
