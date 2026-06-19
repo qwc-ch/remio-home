@@ -361,6 +361,53 @@ export const Player = ({
     setLyricsOpen((prev) => !prev);
   }, []);
 
+  const fetchPlaylist = useCallback(async () => {
+    let tracks: Track[] = [];
+    try {
+      if (musicConfig?.mode === "meting" && musicConfig.meting) {
+        const m = musicConfig.meting;
+        const apis = [m.api].concat(m.fallbackApis || []);
+        for (const baseApi of apis) {
+          if (!baseApi) continue;
+          try {
+            const fetchUrl = baseApi
+              .replace(":server", m.server || "netease")
+              .replace(":type", m.type || "playlist")
+              .replace(":id", m.id || "")
+              .replace(":r", Math.random().toString());
+            const url = m.auth ? fetchUrl + "&auth=" + m.auth : fetchUrl;
+            const res = await fetch(`/api/music?url=${encodeURIComponent(url)}`);
+            const json = await res.json();
+            if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+              tracks = json.data.map((item: any) => ({
+                name: item.title || item.name || "Unknown",
+                artist: item.author || item.artist || "Unknown",
+                url: item.url,
+                pic: item.pic || item.cover || "",
+                lrc: item.lrc,
+              }));
+              break;
+            }
+          } catch {
+            continue;
+          }
+        }
+      } else if (musicConfig?.mode === "local" && musicConfig.local?.playlist) {
+        tracks = musicConfig.local.playlist.map((song: LocalSong) => ({
+          name: song.name,
+          artist: song.artist,
+          url: song.url,
+          pic: song.cover,
+          lrc: song.lrc,
+        }));
+      }
+    } catch {
+      // fallthrough
+    }
+    lastFetchRef.current = Date.now();
+    return tracks;
+  }, [musicConfig]);
+
   const refreshPlaylist = useCallback(async () => {
     setLoading(true);
     const tracks = await fetchPlaylist();
@@ -410,53 +457,6 @@ export const Player = ({
       }
     }, 3000);
   }, [currentLrcIndex]);
-
-  const fetchPlaylist = useCallback(async () => {
-    let tracks: Track[] = [];
-    try {
-      if (musicConfig?.mode === "meting" && musicConfig.meting) {
-        const m = musicConfig.meting;
-        const apis = [m.api].concat(m.fallbackApis || []);
-        for (const baseApi of apis) {
-          if (!baseApi) continue;
-          try {
-            const fetchUrl = baseApi
-              .replace(":server", m.server || "netease")
-              .replace(":type", m.type || "playlist")
-              .replace(":id", m.id || "")
-              .replace(":r", Math.random().toString());
-            const url = m.auth ? fetchUrl + "&auth=" + m.auth : fetchUrl;
-            const res = await fetch(`/api/music?url=${encodeURIComponent(url)}`);
-            const json = await res.json();
-            if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-              tracks = json.data.map((item: any) => ({
-                name: item.title || item.name || "Unknown",
-                artist: item.author || item.artist || "Unknown",
-                url: item.url,
-                pic: item.pic || item.cover || "",
-                lrc: item.lrc,
-              }));
-              break;
-            }
-          } catch {
-            continue;
-          }
-        }
-      } else if (musicConfig?.mode === "local" && musicConfig.local?.playlist) {
-        tracks = musicConfig.local.playlist.map((song: LocalSong) => ({
-          name: song.name,
-          artist: song.artist,
-          url: song.url,
-          pic: song.cover,
-          lrc: song.lrc,
-        }));
-      }
-    } catch {
-      // fallthrough
-    }
-    lastFetchRef.current = Date.now();
-    return tracks;
-  }, [musicConfig]);
 
   // Init
   useEffect(() => {
