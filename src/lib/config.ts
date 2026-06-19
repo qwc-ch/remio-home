@@ -12,39 +12,6 @@ import { join } from "path";
 import { defaultAppConfig } from "./rules";
 import { AppConfigService } from "./service";
 
-function stripJsonComments(json: string): string {
-  let inString = false;
-  let result = "";
-  for (let i = 0; i < json.length; i++) {
-    const ch = json[i];
-    const next = json[i + 1];
-    if (inString) {
-      if (ch === "\\" && next) {
-        result += ch + next;
-        i++;
-      } else if (ch === '"') {
-        inString = false;
-      }
-      result += ch;
-    } else {
-      if (ch === '"') {
-        inString = true;
-        result += ch;
-      } else if (ch === "/" && next === "/") {
-        while (i < json.length && json[i] !== "\n") i++;
-        if (i < json.length) result += "\n";
-      } else if (ch === "/" && next === "*") {
-        i += 2;
-        while (i < json.length && !(json[i] === "*" && json[i + 1] === "/")) i++;
-        i++;
-      } else {
-        result += ch;
-      }
-    }
-  }
-  return result;
-}
-
 export const CONFIG_DIR = process.env.CONFIG_DIR
   ? process.env.CONFIG_DIR
   : join(process.cwd(), "src", "config");
@@ -71,8 +38,7 @@ export async function getConfig(throwError: boolean = false) {
     );
     if (existsSync(configPath)) {
       const config = await readFileSync(configPath, "utf-8");
-      const json = stripJsonComments(config);
-      return JSON.parse(json) as AppConfig;
+      return JSON.parse(config) as AppConfig;
     } else {
       if (throwError) {
         throw new Error(`无法找到配置文件：${configPath}，请检查~`);
