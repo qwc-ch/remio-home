@@ -75,6 +75,8 @@ export default async function Home() {
         bgStyle={bgConfig?.bgStyle}
         blur={bgConfig?.blur || "sm"}
         audio={bgConfig?.audio}
+        carousel={bgConfig?.carousel}
+        carouselGap={bgConfig?.carouselGap}
         theme={globalStyle?.theme}
         motions={getMotion(0.1, 4, 0.2, istTransition)}
         musicConfig={others?.music}
