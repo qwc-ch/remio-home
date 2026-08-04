@@ -32,7 +32,7 @@
     "bgStyle": "",
     "blur": "none",
     "cardOpacity": 0.5,
-    "carousel": true,
+    "carousel": false,
     "carouselGap": 5,
     "transitionTime": 0.7,
     "transitionStyle": "default",
@@ -104,6 +104,18 @@
       "title": "年华的博客",
       "url": "https://blog.amamo.top/",
       "desc": "博客主页"
+    },
+    {
+      "icon": "https://q1.qlogo.cn/g?b=qq&nk=1323860289&s=640",
+      "title": "年华的音乐",
+      "url": "https://music.amamo.top/",
+      "desc": "音乐主页"
+    },
+    {
+      "icon": "https://q1.qlogo.cn/g?b=qq&nk=1323860289&s=640",
+      "title": "年华的博客后台",
+      "url": "https://config.520781.xyz/",
+      "desc": "博客后台"
     }
   ],
   "sitesConfig": {
