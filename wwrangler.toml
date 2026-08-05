@@ -1,0 +1,8 @@
+me = "remio-home"
+compatibility_date = "2026-08-05" # 更为今日
+
+[assets]
+directory = "./dist"
+
+[vars]
+NODE_VERSION = "24"
