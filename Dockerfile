@@ -4,7 +4,7 @@ WORKDIR /remio-home
 
 COPY . .
 
-RUN npm install -g pnpm && pnpm i --frozen-lockfile
+RUN npm install -g pnpm@9.14.4 && pnpm i --frozen-lockfile
 ENV VERSION=${VERSION}
 RUN pnpm build
 
