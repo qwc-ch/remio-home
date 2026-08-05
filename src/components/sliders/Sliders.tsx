@@ -5,11 +5,10 @@
  * @LastEditTime: 2024-06-18 11:39:49
  * @Description:
  */
-"use client";
 
 import { clsx, isValidUrl } from "@kasuie/utils";
 import { motion } from "framer-motion";
-import { SlidersConfig, Slider as SliderType } from "@/config/config";
+import { SlidersConfig, Slider as SliderType } from "@/config";
 import { Slider } from "../ui/slider/Slider";
 
 export const Sliders = ({

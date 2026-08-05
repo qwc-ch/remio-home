@@ -5,11 +5,10 @@
  * @LastEditTime: 2024-06-21 21:57:20
  * @Description:
  */
-"use client";
 
 import { useEffect, useState } from "react";
 import { TextUpView } from "../ui/transition/TextUpView";
-import { SubTitleConfig } from "@/config/config";
+import { SubTitleConfig } from "@/config";
 import { clsx } from "@kasuie/utils";
 
 interface Item {
@@ -66,7 +65,7 @@ export function HoriTextEffect({
       return (curr?.length || 0) + prev;
     }, 0);
     setData(temp);
-  }, [h1s, ps]);
+  }, [h1s, ps, gapDelay]);
 
   return (
     <div className="max-w-2xl z-[1] text-white">

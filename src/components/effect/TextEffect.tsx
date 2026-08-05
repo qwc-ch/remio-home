@@ -5,10 +5,9 @@
  * @LastEditTime: 2024-06-27 18:00:29
  * @Description:
  */
-"use client";
-import { SubTitleConfig } from "@/config/config";
+import { SubTitleConfig } from "@/config";
 import { clsx } from "@kasuie/utils";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { TextUpView } from "../ui/transition/TextUpView";
 
@@ -33,6 +32,53 @@ export function TextEffect({
   const [isHitokoto, setIsHitokoto] = useState(false);
   const [from, setFrom] = useState("");
 
+  const writing = useCallback(
+    (
+      index: number,
+      words: string,
+      text: string,
+      increase: boolean = true
+    ) => {
+      if (index < words.length && increase) {
+        text = text + words[index];
+        setSubTitle(text);
+        setTimeout(() => writing(++index, words, text), 200);
+      } else {
+        if (index == 0) {
+          setSubTitle("");
+        } else if (index != words.length) {
+          text = text.slice(0, -1);
+          setSubTitle(text);
+          setTimeout(() => writing(--index, words, text, false), 50);
+        }
+      }
+    },
+    []
+  );
+
+  const hitokotoRef = useRef({
+    isHitokoto,
+    text,
+    typing,
+    loopTyping,
+    loadingText,
+    tempText,
+    showFrom,
+    typingGap,
+    writing,
+  });
+  hitokotoRef.current = {
+    isHitokoto,
+    text,
+    typing,
+    loopTyping,
+    loadingText,
+    tempText,
+    showFrom,
+    typingGap,
+    writing,
+  };
+
   useEffect(() => {
     const width: number | undefined =
       document?.querySelector(".k-words-hearts")?.clientWidth;
@@ -51,21 +97,28 @@ export function TextEffect({
         })
         .then((res) => {
           setLoadingText(res?.hitokoto);
-          showFrom && setFrom(`《${res?.from}》`);
+          if (showFrom) setFrom(`《${res?.from}》`);
         })
         .catch((e) => console.log("error>>>", e));
     } else if (text) {
       setSubTitle(text);
     }
-  }, [text]);
+  }, [text, showFrom]);
 
   useEffect(() => {
     if (loadingText) {
-      typing ? writing(0, loadingText, "") : setSubTitle(loadingText);
+      const { typing, writing } = hitokotoRef.current;
+      if (typing) {
+        writing(0, loadingText, "");
+      } else {
+        setSubTitle(loadingText);
+      }
     }
   }, [loadingText]);
 
   useEffect(() => {
+    const { isHitokoto, text, typing, loopTyping, tempText, showFrom, typingGap, writing } =
+      hitokotoRef.current;
     if (isHitokoto && text && typing && loopTyping) {
       if (subTitle && subTitle === loadingText) {
         fetch(text, { cache: "no-store" })
@@ -76,7 +129,7 @@ export function TextEffect({
             setTimeout(
               () => {
                 writing(subTitle.length - 1, loadingText, loadingText, false);
-                showFrom && setTimeout(() => setFrom(`《${res?.from}》`), 1000);
+                if (showFrom) setTimeout(() => setFrom(`《${res?.from}》`), 1000);
               },
               Math.max(+typingGap * 1000, 3000)
             );
@@ -87,28 +140,7 @@ export function TextEffect({
         setTimeout(() => setLoadingText(tempText), 3000);
       }
     }
-  }, [subTitle]);
-
-  const writing = (
-    index: number,
-    words: string,
-    text: string,
-    increase: boolean = true
-  ) => {
-    if (index < words.length && increase) {
-      text = text + words[index];
-      setSubTitle(text);
-      setTimeout(() => writing(++index, words, text), 200);
-    } else {
-      if (index == 0) {
-        setSubTitle("");
-      } else if (index != words.length) {
-        text = text.slice(0, -1);
-        setSubTitle(text);
-        setTimeout(() => writing(--index, words, text, false), 50);
-      }
-    }
-  };
+  }, [subTitle, loadingText]);
 
   const renderParticles = () => {
     const particles = [];

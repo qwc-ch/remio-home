@@ -1,4 +1,3 @@
-"use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Play,
@@ -40,6 +39,7 @@ interface MetingConfig {
   id?: string;
   auth?: string;
   fallbackApis?: string[];
+  proxy?: string;
 }
 
 interface MusicConfig {
@@ -54,10 +54,18 @@ interface MusicConfig {
 
 type PlayMode = 0 | 1 | 2;
 
-function proxyAudioUrl(url: string): string {
+/**
+ * 无后端环境下直接播放，若音频地址存在 CORS 限制，
+ * 可通过 music.meting.proxy 配置公共 CORS 代理模板（:url 占位符）
+ */
+function proxyAudioUrl(url: string, proxy?: string): string {
   if (!url || url.startsWith("/") || url.startsWith("blob:")) return url;
-  return `/api/music/audio?url=${encodeURIComponent(url)}`;
+  if (proxy) return proxy.replace(":url", encodeURIComponent(url));
+  return url;
 }
+
+const withProxy = (url: string, proxy?: string) =>
+  proxy ? proxy.replace(":url", encodeURIComponent(url)) : url;
 
 function formatTime(seconds: number): string {
   if (!seconds || isNaN(seconds)) return "0:00";
@@ -108,7 +116,7 @@ const RepeatOneIcon = () => (
 );
 
 const PlaylistIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+  <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
     <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
   </svg>
 );
@@ -225,10 +233,16 @@ export const Player = ({
               .replace(":id", m.id || "")
               .replace(":r", Math.random().toString());
             const url = m.auth ? fetchUrl + "&auth=" + m.auth : fetchUrl;
-            const res = await fetch(`/api/music?url=${encodeURIComponent(url)}`);
+            const res = await fetch(withProxy(url, m.proxy));
             const json = await res.json();
-            if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-              tracks = json.data.map((item: any) => ({
+            let list: any[] = [];
+            if (Array.isArray(json)) {
+              list = json;
+            } else if (Array.isArray(json?.data)) {
+              list = json.data;
+            }
+            if (list.length > 0) {
+              tracks = list.map((item: any) => ({
                 name: item.title || item.name || "Unknown",
                 artist: item.author || item.artist || "Unknown",
                 url: item.url,
@@ -257,6 +271,8 @@ export const Player = ({
     return tracks;
   }, [musicConfig]);
 
+  const proxy = musicConfig?.meting?.proxy;
+
   const loadTrack = useCallback(
     (index: number, autoPlay: boolean) => {
       if (index < 0 || index >= playlist.length) return;
@@ -264,7 +280,7 @@ export const Player = ({
       const track = playlist[index];
       setCurrentIndex(index);
       if (audioRef.current) {
-        audioRef.current.src = proxyAudioUrl(track.url);
+        audioRef.current.src = proxyAudioUrl(track.url, proxy);
         audioRef.current.load();
         loadLyrics(track);
         if (autoPlay) {
@@ -281,7 +297,7 @@ export const Player = ({
         }
       }
     },
-    [playlist, loadLyrics]
+    [playlist, loadLyrics, proxy]
   );
 
   const playNext = useCallback(
@@ -447,11 +463,11 @@ export const Player = ({
       const startIndex = playMode === 2 ? Math.floor(Math.random() * playlist.length) : 0;
       setCurrentIndex(startIndex);
       const track = playlist[startIndex];
-      audioRef.current.src = proxyAudioUrl(track.url);
+      audioRef.current.src = proxyAudioUrl(track.url, proxy);
       audioRef.current.load();
       loadLyrics(track);
     }
-  }, [playlist, playMode, loadLyrics]);
+  }, [playlist, playMode, loadLyrics, proxy]);
 
   useEffect(() => {
     if (lyrics.length === 0) {
@@ -573,7 +589,6 @@ export const Player = ({
               style={{ backgroundColor: `${primaryColor}1a` }}
             >
               <MusicNoteIcon />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 className={clsx(
                   "absolute inset-0 z-10 h-full w-full rounded-full object-cover transition-opacity duration-300",
@@ -695,7 +710,7 @@ export const Player = ({
             onClick={() => setPlaylistFullOpen((p) => !p)}
             className={clsx(
               "p-2 transition-all duration-300 active:scale-95",
-              playlistFullOpen ? "text-[var(--primary-color)]" : "text-neutral-400 hover:text-[var(--primary-color)]"
+              playlistFullOpen ? "text-[var(--primary-color)]" : "text-neutral-600 hover:text-[var(--primary-color)] dark:text-neutral-300"
             )}
             title="播放列表"
           >
@@ -813,7 +828,6 @@ export const Player = ({
                     >
                       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-neutral-200 dark:bg-neutral-700">
                         {track.pic ? (
-                          /* eslint-disable-next-line @next/next/no-img-element */
                           <img src={track.pic} className="h-full w-full object-cover" alt="" />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center"><MusicNoteIcon /></div>

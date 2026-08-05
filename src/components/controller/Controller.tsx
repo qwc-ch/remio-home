@@ -5,18 +5,11 @@
  * @LastEditTime: 2024-10-22 21:33:33
  * @Description:
  */
-"use client";
-import { ExternalLink, Setting } from "@kasuie/icon";
+import { Setting } from "@kasuie/icon";
 import { clsx } from "@kasuie/utils";
 import { motion } from "framer-motion";
 import { ThemeSwitcher } from "../ui/switcher/ThemeSwitcher";
-import { getMotion, showMotion } from "@/lib/motion";
-import dynamic from "next/dynamic";
-
-const MuteSwitcher = dynamic(
-  async () =>
-    (await import("@/components/ui/switcher/MuteSwitcher")).MuteSwitcher
-);
+import { MuteSwitcher } from "../ui/switcher/MuteSwitcher";
 
 export function Controller({
   motions,
@@ -28,7 +21,7 @@ export function Controller({
   motions?: object;
   theme?: string;
   hasMedia?: boolean;
-  handleMuteUnmute?: Function;
+  handleMuteUnmute?: (muted: boolean) => void;
   extraButtons?: React.ReactNode;
 }) {
   const hidden = !hasMedia && theme != "switcher";

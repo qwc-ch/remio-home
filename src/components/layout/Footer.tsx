@@ -5,13 +5,11 @@
  * @LastEditTime: 2025-02-22 19:38:45
  * @Description:
  */
-"use client";
-import { FooterConfig } from "@/config/config";
+import { FooterConfig } from "@/config";
 import { ExternalLink } from "@kasuie/icon";
 import { clsx } from "@kasuie/utils";
 import { motion } from "framer-motion";
 import { Image } from "@/components/ui/image/Image";
-import Link from "next/link";
 
 export function Footer({
   footer,
@@ -24,14 +22,15 @@ export function Footer({
     const regex = /备\s*(\d+?)号/;
     const match = text.replace(/\s+/g, "").match(regex);
     return (
-      <Link
+      <a
         target="_blank"
+        rel="noreferrer"
         href={`https://beian.mps.gov.cn/#/query/webSearch?code=${match?.[1]}`}
         className="flex flex-nowrap items-center gap-1"
       >
         <Image src={"/icons/MPSICP.png"} width={14} height={14} alt="MPSICP" />
         <span>{text}</span>
-      </Link>
+      </a>
     );
   };
 
@@ -51,25 +50,27 @@ export function Footer({
           })}
         >
           {footer?.url ? (
-            <Link
+            <a
               href={footer.url}
               target="_blank"
+              rel="noreferrer"
               className="flex flex-nowrap items-center gap-1"
             >
               <span>{footer.text}</span>
               {footer?.isExternal && <ExternalLink size={12} />}
-            </Link>
+            </a>
           ) : (
             <span>{footer?.text}</span>
           )}
           {footer?.ICP && (
-            <Link
+            <a
               href={"https://beian.miit.gov.cn"}
               target="_blank"
+              rel="noreferrer"
               className="flex flex-nowrap items-center gap-1"
             >
               <span>{footer.ICP}</span>
-            </Link>
+            </a>
           )}
           {footer?.MPSICP && renderMPS(footer.MPSICP)}
         </div>

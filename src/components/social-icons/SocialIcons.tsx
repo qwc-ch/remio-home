@@ -5,7 +5,6 @@
  * @LastEditTime: 2025-08-22 17:29:07
  * @Description:
  */
-"use client";
 import {
   Github,
   Twitter,
@@ -19,11 +18,10 @@ import {
   X,
   SvgProps,
 } from "@kasuie/icon";
-import Link from "next/link";
 import { Avatar } from "../ui/image/Avatar";
 import { clsx, isValidUrl } from "@kasuie/utils";
 import { motion } from "framer-motion";
-import { Link as LinkType } from "@/config/config";
+import { Link as LinkType } from "@/config";
 import { ATransition } from "../ui/transition/ATransition";
 
 export const SocialIcons = ({
@@ -80,10 +78,11 @@ export const SocialIcons = ({
               className="inline-block"
               as="li"
             >
-              <Link
+              <a
                 key={index}
                 href={v?.url || ""}
                 target="_blank"
+                rel="noreferrer"
                 className={clsx(
                   "group relative flex h-9 w-9 flex-shrink-0 flex-grow-0 cursor-pointer items-center justify-center rounded-full bg-white/60 text-center text-[#3f345f] shadow-[0_5px_25px_#5d46e826] duration-500 ease-linear before:absolute before:left-[-8px] before:top-[-8px] before:h-[calc(100%+16px)] before:w-[calc(100%+16px)] before:rounded-full before:border before:border-[#ffffff8c] before:opacity-0 hover:animate-[move_0.9s_both] hover:before:animate-[1.5s_linear_0s_normal_none_infinite_focuse] dark:bg-transparent",
                   {
@@ -108,7 +107,7 @@ export const SocialIcons = ({
                 ) : (
                   renderIcon(v.icon, v.color)
                 )}
-              </Link>
+              </a>
             </ATransition>
           );
         })}

@@ -5,8 +5,7 @@
  * @LastEditTime: 2024-11-28 20:58:12
  * @Description:
  */
-"use client";
-import { AvatarConfig } from "@/config/config";
+import { AvatarConfig } from "@/config";
 import { ImageProps, Image } from "./Image";
 import { motion } from "framer-motion";
 import { clsx, transitions } from "@kasuie/utils";
@@ -35,6 +34,7 @@ export function Avatar({
   width,
   height,
   className,
+  style: _style,
   ...imageProps
 }: AvatarProps) {
   return (

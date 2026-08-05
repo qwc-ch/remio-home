@@ -5,7 +5,6 @@
  * @LastEditTime: 2024-06-11 17:51:34
  * @Description: 
  */
-"use client";
 import { transitions } from "@kasuie/utils";
 import { createTransitionView } from "./factor";
 import { BaseTransitionProps } from "./typings";

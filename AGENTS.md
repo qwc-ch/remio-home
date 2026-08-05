@@ -1,68 +1,71 @@
 # remio-home
 
-Personal homepage built with Next.js 14 (App Router), TailwindCSS, NextUI.
+Personal homepage built with React 19 + Vite 8 + TailwindCSS + TypeScript.
 
 ## Commands
 
 | Command | Purpose |
 |---|---|
-| `pnpm dev` | Dev server |
-| `pnpm build` | Production build (`output: "standalone"` for Docker) |
-| `pnpm start` | Start production server |
-| `pnpm lint` | `next lint` |
-| `pnpm lint-staged` | Runs `eslint --fix` on staged `*.{js,jsx,ts,tsx}` |
+| `pnpm dev` | Dev server (port 5173) |
+| `pnpm build` | Typecheck (`tsc --noEmit`) + production build to `dist/` |
+| `pnpm preview` | Preview production build |
+| `pnpm lint` | `eslint .` (flat config) |
 
 ## Structure
 
 ```
 src/
-  app/           - Next.js App Router (pages + API routes)
-    api/
-      config/    - GET/POST config (auth required)
-      verify/    - POST password auth, sets accessToken cookie
-      file/      - GET config as downloadable JSON (auth required)
-      manifest/  - Dynamic PWA manifest
-      weather/   - Proxy to AMap weather API
-    config/      - Online config editor page (password-protected)
+  App.tsx        - Entry component (assembles config + renders layout/effects)
+  main.tsx       - React root entry
   components/    - UI components
-  config/        - Default config.json + TypeScript types
-  constants/     - API endpoint constants
-  lib/           - Core logic: config.ts, db.ts (pg), service.ts, fetch.ts, motion.ts, rules.ts, utils.ts
-  providers/     - ThemeProvider + NextUIProvider
+  config/        - Split TypeScript config files (see below)
+  lib/           - Core logic: config.ts (transform), motion.ts, theme.ts
+  providers/     - AppProviders + ConfigContext
   styles/        - CSS files
-  middleware.ts  - Protects /config route with cookie-based auth
 ```
 
 ## Config
 
-Config source is auto-detected: if `PG_DATABASE_URL` env is set → PostgreSQL, else file-based.
+纯前端静态配置，无后台。配置按模块拆分为多个 TS 文件，由 `src/config/index.ts` 合并为 `AppConfig`：
 
-- File config path: `$CONFIG_DIR/config.json` (default: `src/config/` or `/remio-home/config/` in Docker)
-- Config page: `/config` (password-protected via `PASSWORD` env var)
-- API: `GET /api/config`, `POST /api/config`
-- Auth uses AES encryption (`CryptoJS`) for cookie-based `accessToken` (14-day expiry)
+| File | Contents |
+|---|---|
+| `site.ts` | name / favicon / keywords / description / domain |
+| `profile.ts` | avatarConfig / subTitle / subTitleConfig |
+| `appearance.ts` | globalStyle / bgConfig / layoutConfig |
+| `social.ts` | links / socialConfig |
+| `sites.ts` | sites / sitesConfig |
+| `skills.ts` | sliders (技能加点) |
+| `music.ts` | music (播放器) |
+| `footer.ts` | footer / resources |
+
+修改配置后重新 `pnpm build` 或直接 `pnpm dev` 即可生效。
 
 ## Environmental Variables
 
+Vite 变量需以 `VITE_` 前缀，放入 `.env.local`：
+
 | Variable | Purpose |
 |---|---|
-| `PASSWORD` | Config editor password (required) |
-| `GTMID` | Google Tag Manager |
-| `GTAGID` | Google Analytics |
-| `BAIDUID` | Baidu Analytics |
-| `BaiduSiteVerify` | Baidu site verification |
-| `AMAP_KEY` | AMap (高德地图) API key for weather |
-| `PG_DATABASE_URL` | PostgreSQL connection for config storage |
-| `CONFIG_DIR` | Override config file directory |
-| `IS_DOCKER` | Set to `1` in Docker |
-| `VERSION` | Build version |
+| `VITE_GTMID` | Google Tag Manager |
+| `VITE_GTAGID` | Google Analytics |
+| `VITE_BAIDUID` | Baidu Analytics |
+| `VITE_BAIDU_SITE_VERIFY` | Baidu site verification |
+| `VITE_VERSION` | Build version (console logo) |
+
+## 无后端说明
+
+- 天气直接调用公开 API（uapis.cn）
+- 音乐播放器直接请求 meting API；若目标 API 存在 CORS 限制，
+  可在 `src/config/music.ts` 的 `music.meting.proxy` 配置公共 CORS 代理模板
+  （`:url` 为占位符，如 `https://corsproxy.io/?url=:url`）
 
 ## Build & Docker
 
-- `next.config.mjs`: `output: "standalone"`, eslint ignored during build, PWA via `next-pwa` (disabled in dev)
-- Docker: `node:22-alpine` base, multi-stage build, user `nextjs:nodejs`
-- Volumes: `/remio-home/config`, `/remio-home/public/icons`, `/remio-home/public/fonts`
-- CI: GitHub Actions builds multi-arch Docker images on version tags (`v*`), pushes to Docker Hub + Ali registry
+- `vite.config.ts`: `@/*` alias → `./src/*`
+- Docker: node:22-alpine 构建静态产物 → nginx:alpine 托管
+- 可选挂载 `/opt/icons` 到容器内自定义站点图标
+- CI: GitHub Actions builds multi-arch Docker images on version tags (`v*`)
 
 ## Conventions
 
@@ -70,7 +73,6 @@ Config source is auto-detected: if `PG_DATABASE_URL` env is set → PostgreSQL, 
 - **Husky**: `pre-commit` runs `pnpm lint-staged`; `commit-msg` runs `pnpm commitlint --edit`
 - **Commitlint**: conventional commits with custom types (`init`, `ci`, `wip`, `feat`, `fix`, ...)
 - **Prettier**: `@kasuie/prettier` factory, singleQuote: false, tailwindcss sorting enabled
-- **Dark mode**: CSS class + `[data-theme="dark"]` attribute via `next-themes`
+- **Dark mode**: CSS class + `[data-theme="dark"]` attribute, handled by `src/lib/theme.ts`
 - **CSS**: TailwindCSS with `mio-` prefixed custom keyframes/colors (`mio-main`, `mio-bg`, etc.)
 - **No tests** are configured in this project
-- PWA auto-generated files (`sw.*`, `workbox-*`) are gitignored

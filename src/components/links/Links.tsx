@@ -5,21 +5,15 @@
  * @LastEditTime: 2026-04-28 15:25:40
  * @Description:
  */
-"use client";
 import { Image } from "@/components/ui/image/Image";
 import useModal from "@/components/ui/modal/useModal";
 import { Modal } from "@/components/ui/modal/Modal";
-import Link from "next/link";
 import { ExternalLink, DotsHorizontal } from "@kasuie/icon";
 import { clsx } from "@kasuie/utils";
-import { Site, SitesConfig } from "@/config/config";
+import { Site, SitesConfig } from "@/config";
 import { motion } from "framer-motion";
-import dynamic from "next/dynamic";
 import { CSSProperties } from "react";
-
-const FlipCard = dynamic(
-  async () => (await import("../cards/FlipCard")).FlipCard
-);
+import { FlipCard } from "../cards/FlipCard";
 
 export function Links({
   staticSites,
@@ -125,9 +119,9 @@ export function Links({
         )}
       >
         {item?.url ? (
-          <Link href={item.url} className="h-full w-full" target="_blank">
+          <a href={item.url} className="h-full w-full" target="_blank" rel="noreferrer">
             {itemContent(item, outer)}
-          </Link>
+          </a>
         ) : (
           <div
             onClick={() => sitesConfig?.modal && openModal()}

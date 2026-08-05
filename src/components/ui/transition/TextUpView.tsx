@@ -5,7 +5,6 @@
  * @LastEditTime: 2024-06-11 20:29:31
  * @Description:
  */
-"use client";
 
 import React from "react";
 import { HTMLMotionProps, motion } from "framer-motion";
@@ -55,7 +54,7 @@ export const TextUpView: FC<
             transform: "translateY(0px)",
             opacity: 1,
             transition: {
-              ...microReboundPreset,
+              ...(microReboundPreset as any),
               duration: 0.1,
               delay: i * eachDelay + initialDelay,
             },

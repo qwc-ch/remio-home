@@ -1,39 +1,22 @@
-FROM node:22-alpine AS base
+FROM node:22-alpine AS builder
 ARG VERSION
-
-FROM base AS deps
-
-RUN apk add --no-cache libc6-compat
-
 WORKDIR /remio-home
 
 COPY . .
-RUN set -eux; \
-    npm install -g pnpm && pnpm i --frozen-lockfile;
 
-FROM base AS builder
+RUN npm install -g pnpm && pnpm i --frozen-lockfile
+ENV VERSION=${VERSION}
+RUN pnpm build
 
-WORKDIR /remio-home
+FROM nginx:alpine AS runner
+WORKDIR /usr/share/nginx/html
 
-COPY --from=deps /remio-home/ .
+COPY --from=builder /remio-home/dist ./
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY entrypoint.sh /entrypoint.sh
 
-RUN npm install -g pnpm && pnpm run build
+EXPOSE 80
 
-FROM base AS runner
-WORKDIR /remio-home
-
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-
-ENV CONFIG_DIR=/remio-home/config NODE_ENV=production IS_DOCKER=1 VERSION=${VERSION}
-
-COPY --from=builder /remio-home/public ./public
-COPY --from=builder --chown=nextjs:nodejs /remio-home/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /remio-home/.next/static ./.next/static
-
-USER nextjs
-
-CMD ["node", "server.js"]
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]

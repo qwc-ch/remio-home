@@ -5,16 +5,19 @@
  * @LastEditTime: 2024-05-24 10:09:47
  * @Description:
  */
-"use client";
 import { makeBlurDataURL } from "@kasuie/utils";
-import NextImage, { ImageProps as OImageProps } from "next/image";
+import { CSSProperties, ImgHTMLAttributes } from "react";
 
 export type ImageProps = {
   alt?: string | undefined;
   className?: any;
   imageProps?: any;
   skeleton?: boolean;
-} & OImageProps;
+  priority?: boolean;
+  width?: number;
+  height?: number;
+  style?: CSSProperties;
+} & Omit<ImgHTMLAttributes<HTMLImageElement>, "alt">;
 
 export const Image = ({
   width,
@@ -23,19 +26,19 @@ export const Image = ({
   alt,
   className,
   skeleton = false,
-  unoptimized = true,
+  priority,
   ...imageProps
 }: ImageProps) => {
   return (
-    <NextImage
-      src={src}
+    <img
+      src={src as string}
       alt={alt || "image"}
       width={width}
       height={height}
-      unoptimized={unoptimized}
+      loading="lazy"
       {...(skeleton
         ? {
-            placeholder: "blur",
+            placeholder: "blur" as const,
             blurDataURL: makeBlurDataURL(width as number, height as number),
           }
         : {})}

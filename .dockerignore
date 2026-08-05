@@ -1,0 +1,14 @@
+node_modules
+dist
+.next
+.git
+.gitignore
+images
+*.log
+Dockerfile
+docker-compose.yml
+.husky
+.github
+README.md
+LICENSE
+AGENTS.md

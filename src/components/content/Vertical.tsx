@@ -17,7 +17,7 @@ import {
   SlidersConfig,
   SocialConfig,
   SubTitleConfig,
-} from "@/config/config";
+} from "@/config";
 import { TextEffect } from "../effect/TextEffect";
 import { SocialIcons } from "../social-icons/SocialIcons";
 import { Links } from "../links/Links";
@@ -82,7 +82,6 @@ export function Vertical({
           motions={getMotion(0.1, 0, 0, istTransition)}
           animateStyle={avatarConfig?.style}
           {...avatarConfig}
-          style={""}
         />
       )}
       <TextEffect

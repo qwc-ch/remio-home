@@ -6,15 +6,15 @@
  * @Description:
  */
 import type { Config } from "tailwindcss";
-const { nextui } = require("@nextui-org/theme");
 
 const config: Config = {
   darkMode: ["class", '[data-theme="dark"]'],
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./index.html",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@nextui-org/theme/dist/components/(accordion|checkbox|skeleton|select|radio|input|slider).js",
+    "./src/config/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/providers/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/lib/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -101,6 +101,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [nextui({ prefix: "mio" })],
+  plugins: [],
 };
 export default config;

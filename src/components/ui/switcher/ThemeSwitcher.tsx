@@ -5,11 +5,10 @@
  * @LastEditTime: 2024-08-17 21:17:44
  * @Description:
  */
-"use client";
-import { useTheme } from "next-themes";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
-import { clsx, storage } from "@kasuie/utils";
+import { clsx } from "@kasuie/utils";
 import { motion } from "framer-motion";
+import { getStoredTheme, setTheme as applyTheme, Theme } from "@/lib/theme";
 
 export const ThemeSwitcher = ({
   className = "relative",
@@ -22,23 +21,21 @@ export const ThemeSwitcher = ({
   theme?: string;
   motions?: object;
 }) => {
-  const { setTheme } = useTheme();
-
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    let ltheme =
-      theme == "switcher" ? storage.l.get("theme") : theme || "light";
-    if (theme != "switcher") setTheme(ltheme);
+    const ltheme: Theme =
+      theme == "switcher" ? getStoredTheme() || "light" : theme === "dark" ? "dark" : "light";
+    if (theme != "switcher") applyTheme(ltheme);
     setChecked(ltheme == "dark" ? true : false);
-  }, []);
+  }, [theme]);
 
   const onChange = ({ target: { checked } }: BaseSyntheticEvent) => {
     if (checked) {
-      setTheme("dark");
+      applyTheme("dark");
       setChecked(true);
     } else {
-      setTheme("light");
+      applyTheme("light");
       setChecked(false);
     }
   };

@@ -22,7 +22,7 @@ export function Modal({
   children?: React.ReactNode;
   title?: string;
   visible: boolean;
-  closeModal?: Function;
+  closeModal?: () => void;
   className?: string;
   warpClass?: string;
   mainClass?: string;

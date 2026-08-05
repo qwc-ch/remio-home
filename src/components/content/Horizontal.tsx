@@ -17,21 +17,13 @@ import {
   SlidersConfig,
   SocialConfig,
   SubTitleConfig,
-} from "@/config/config";
+} from "@/config";
 import { SocialIcons } from "../social-icons/SocialIcons";
 import { Links } from "../links/Links";
 import { Sliders } from "../sliders/Sliders";
-import dynamic from "next/dynamic";
 import { DoubleArrow } from "@kasuie/icon";
-
-const TextEffect = dynamic(
-  async () => (await import("@/components/effect/TextEffect")).TextEffect
-);
-
-const HoriTextEffect = dynamic(
-  async () =>
-    (await import("@/components/effect/HoriTextEffect")).HoriTextEffect
-);
+import { TextEffect } from "../effect/TextEffect";
+import { HoriTextEffect } from "../effect/HoriTextEffect";
 
 interface HorizontalProps extends HTMLAttributes<HTMLDivElement> {
   gapSize: string;
@@ -87,7 +79,6 @@ export function Horizontal({
         motions={getMotion(0.1, 1, 0, istTransition, motionKey)}
         animateStyle={avatarConfig?.style}
         {...avatarConfig}
-        style={""}
         warpClass={warpClass}
         className="[@media(max-width:768px)]:mx-auto"
       />

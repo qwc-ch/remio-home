@@ -40,7 +40,7 @@ export const getMotion = (
 };
 
 const createMotions = (key: string) => {
-  let motions = Object.assign({}, showMotion);
+  const motions = Object.assign({}, showMotion);
   switch (key) {
     case "toTop":
       motions.variants = {

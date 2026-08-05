@@ -5,14 +5,23 @@
  * @LastEditTime: 2024-10-22 22:03:02
  * @Description:
  */
-"use client";
-import { BgConfig } from "@/config/config";
+import { BgConfig } from "@/config";
 import { isClientSide, aSakura, clsx } from "@kasuie/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { variants, showMotion } from "@/lib/motion";
 import { Controller } from "../controller/Controller";
 import { MusicToggle, Player } from "../player/Player";
+
+const videoExtensions = [
+  ".mp4",
+  ".webm",
+  ".ogg",
+  ".mov",
+  ".avi",
+  ".flv",
+  ".mkv",
+];
 
 export function MainEffect({
   bgArr,
@@ -37,19 +46,23 @@ export function MainEffect({
   musicConfig?: Record<string, any>;
   primaryColor?: string;
 }) {
-  const videoExtensions = [
-    ".mp4",
-    ".webm",
-    ".ogg",
-    ".mov",
-    ".avi",
-    ".flv",
-    ".mkv",
-  ];
+  const isVideo = useCallback(
+    (url: string) => {
+      const lowerCaseUrl = url?.toLowerCase();
+      if (!lowerCaseUrl) return false;
+      const sourceUrl = lowerCaseUrl.split("?")[0];
+      return videoExtensions.some((extension) => sourceUrl.endsWith(extension));
+    },
+    []
+  );
 
-  const [index, setIndex] = useState<number>(0);
-  const [mindex, setMindex] = useState<number>(0);
-  const [variant, setVariant] = useState<Object>({});
+  const [index, setIndex] = useState<number>(() =>
+    Math.floor(Math.random() * Math.max(bgArr?.length || 1, 1))
+  );
+  const [mindex, setMindex] = useState<number>(() =>
+    Math.floor(Math.random() * Math.max(mbgArr?.length || 1, 1))
+  );
+  const [variant, setVariant] = useState<object>({});
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [aPlaying, setAPlaying] = useState(false);
@@ -68,7 +81,7 @@ export function MainEffect({
       audioRef.current.play();
       setAPlaying(true);
     }
-  });
+  }, [bgStyle]);
 
   useEffect(() => {
     if (audio) {
@@ -86,7 +99,7 @@ export function MainEffect({
       );
       return () => clearInterval(timer);
     }
-  }, [bgArr, carousel]);
+  }, [bgArr, carousel, carouselGap]);
 
   useEffect(() => {
     if (mbgArr && mbgArr.length > 1 && carousel) {
@@ -98,13 +111,15 @@ export function MainEffect({
       );
       return () => clearInterval(timer);
     }
-  }, [mbgArr, carousel]);
+  }, [mbgArr, carousel, carouselGap]);
 
   useEffect(() => {
     if (!autoAnimate) {
-      transitionStyle
-        ? setVariant(variants.default)
-        : setVariant(variants[transitionStyle]);
+      if (transitionStyle) {
+        setVariant(variants.default);
+      } else {
+        setVariant(variants[transitionStyle]);
+      }
     }
   }, [autoAnimate, transitionStyle]);
 
@@ -121,14 +136,7 @@ export function MainEffect({
         setHasMedia(true);
       }
     }
-  }, [mbgArr, bgArr]);
-
-  const isVideo = (url: string) => {
-    const lowerCaseUrl = url?.toLowerCase();
-    if (!lowerCaseUrl) return false;
-    const sourceUrl = lowerCaseUrl.split("?")[0];
-    return videoExtensions.some((extension) => sourceUrl.endsWith(extension));
-  };
+  }, [mbgArr, bgArr, isVideo]);
 
   // 切换播放/暂停状态
   const togglePlayPause = () => {

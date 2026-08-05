@@ -5,7 +5,6 @@
  * @LastEditTime: 2024-10-22 21:33:45
  * @Description:
  */
-"use client";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { clsx } from "@kasuie/utils";
@@ -19,7 +18,7 @@ export const MuteSwitcher = ({
 }: {
   className?: string;
   size?: number;
-  onSwitch?: Function;
+  onSwitch?: (muted: boolean) => void;
   motions?: object;
 }) => {
   const [checked, setChecked] = useState(true);

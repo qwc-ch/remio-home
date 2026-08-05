@@ -5,7 +5,7 @@
  * @LastEditTime: 2024-06-29 16:46:59
  * @Description:
  */
-import { Site } from "@/config/config";
+import { Site } from "@/config";
 import { clsx } from "@kasuie/utils";
 import { Avatar } from "../ui/image/Avatar";
 import { ExternalLink, DotsHorizontal } from "@kasuie/icon";

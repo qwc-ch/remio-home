@@ -1,28 +1,19 @@
-"use client";
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-
-const SunFill = dynamic(async () => (await import("@kasuie/icon")).SunFill);
-const CloudSun = dynamic(async () => (await import("@kasuie/icon")).CloudSun);
-const CloudSunRain = dynamic(
-  async () => (await import("@kasuie/icon")).CloudSunRain
-);
-const Snowflake = dynamic(async () => (await import("@kasuie/icon")).Snowflake);
-const CloudMoon = dynamic(async () => (await import("@kasuie/icon")).CloudMoon);
-const CloudMoonRain = dynamic(
-  async () => (await import("@kasuie/icon")).CloudMoonRain
-);
-const CloudRain = dynamic(async () => (await import("@kasuie/icon")).CloudRain);
-const CloudBolt = dynamic(async () => (await import("@kasuie/icon")).CloudBolt);
-const Hurricane = dynamic(async () => (await import("@kasuie/icon")).Hurricane);
-const Smog = dynamic(async () => (await import("@kasuie/icon")).Smog);
-const Wind = dynamic(async () => (await import("@kasuie/icon")).Wind);
-const CloudMeatball = dynamic(
-  async () => (await import("@kasuie/icon")).CloudMeatball
-);
-const CloudShowersHeavy = dynamic(
-  async () => (await import("@kasuie/icon")).CloudShowersHeavy
-);
+import {
+  SunFill,
+  CloudSun,
+  CloudSunRain,
+  Snowflake,
+  CloudMoon,
+  CloudMoonRain,
+  CloudRain,
+  CloudBolt,
+  Hurricane,
+  Smog,
+  Wind,
+  CloudMeatball,
+  CloudShowersHeavy,
+} from "@kasuie/icon";
 
 const CACHE_KEY = "weather_data_cache";
 const CACHE_DURATION = 30 * 60 * 1000;
@@ -47,7 +38,7 @@ export const Weather = ({ size = 18 }: { size: number }) => {
         setWeatherInfo(info);
         try {
           localStorage.setItem(CACHE_KEY, JSON.stringify({ data: info, time: Date.now() }));
-        } catch {}
+        } catch { /* ignore */ }
       }
     } catch (e) {
       console.log("weather error:", e);
@@ -85,7 +76,7 @@ export const Weather = ({ size = 18 }: { size: number }) => {
           return;
         }
       }
-    } catch {}
+    } catch { /* ignore */ }
     fetchWeather();
   }, []);
 

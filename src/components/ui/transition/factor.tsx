@@ -5,7 +5,6 @@
  * @LastEditTime: 2024-06-11 17:28:55
  * @Description:
  */
-"use client";
 
 import { forwardRef, memo, useState } from "react";
 import { motion } from "framer-motion";
@@ -69,10 +68,10 @@ export const createTransitionView = (params: TransitionViewParams) => {
         ...to,
         transition: {
           duration,
-          ...(preset || microReboundPreset),
+          ...(preset || (microReboundPreset as any)),
           ...animation.enter,
           delay: enter / 1000,
-        },
+        } as any,
       },
       transition: {
         duration,
